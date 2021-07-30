@@ -26,11 +26,6 @@ let spaceship = sprites.create(img`
 spaceship.setPosition(75, 111)
 spaceship.setKind(SpriteKind.Player)
 controller.moveSprite(spaceship, 100, 0)
-// spaceship.set_stay_in_screen(True)
-if (spaceship.x == scene.screenWidth()) {
-    spaceship.x = 0
-}
-
 // Spawn asteroids
 game.onUpdateInterval(1000, function spawner() {
     let yVel = randint(20, 50)

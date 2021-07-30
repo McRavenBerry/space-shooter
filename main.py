@@ -93,9 +93,6 @@ spaceship = sprites.create(img("""
 spaceship.set_position(75, 111)
 spaceship.set_kind(SpriteKind.player)
 controller.move_sprite(spaceship, 100, 0)
-#spaceship.set_stay_in_screen(True)
-if(spaceship.x == scene.screen_width()):
-    spaceship.x = 0
 
 #Spawn asteroids
 game.on_update_interval(1000, spawner)
