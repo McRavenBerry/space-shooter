@@ -1,10 +1,21 @@
 def collision(sprite, otherSprite):
-    sprite.destroy(effects.fire, 100)
+    #sprite.destroy(effects.fire, 100)
     otherSprite.destroy(effects.fire, 100)
-    scene.camera_shake(20, 1000)
+    scene.camera_shake(10, 500)
     music.big_crash.play()
+    damage()
     pause(1000)
+    #damage()
+
+
+def damage():
     info.player1.change_life_by(-1)
+    pause(500)
+    if(info.player1.has_life()):
+        sprites.on_destroyed(SpriteKind.player, on_on_destroyed)
+        pause(500)
+    else:
+        game.over()
 
 def hit(sprite, otherSprite):
     sprite.destroy()
@@ -61,14 +72,14 @@ def spawner():
     xPos = randint(0, scene.screen_width())
     asteroid.set_position(xPos, 0)
     asteroid.set_kind(SpriteKind.enemy)
-    asteroid.set_flag(SpriteFlag.AUTO_DESTROY, True)
+    sprites_to_wrap.append(asteroid)
 
 #Background
 game.splash("Battlefield Galactica")
 effects.star_field.start_screen_effect()
 
 #Set Score and Life 
-info.player1.set_life(1)
+info.player1.set_life(3)
 info.player1.set_score(0)
 
 #Spaceship
@@ -120,3 +131,29 @@ def on_on_update():
         elif value.top > scene.screen_height():
             value.bottom = 0
 game.on_update(on_on_update)
+
+def on_on_destroyed(sprite):
+    global spaceship
+    pause(1000)
+    spaceship = sprites.create(img("""
+    . . . . . . . c d . . . . . . .
+    . . . . . . . c d . . . . . . .
+    . . . . . . 8 c d 8 . . . . . .
+    . . . . . 8 8 c b 8 8 . . . . .
+    . . . . 8 8 6 f f 6 8 8 . . . .
+    . . . . 8 . . c 6 . . 8 . . . .
+    . . . 8 . . . f f . . . 8 . . .
+    . . . . . . . 8 6 . . . . . . .
+    . . . . . . 8 8 9 8 . . . . . .
+    . . . . . . 8 6 9 8 . . . . . .
+    . . . . . c c c 8 8 8 . . . . .
+    . . . . 8 8 6 6 6 9 8 8 . . . .
+    . . 8 f f f c c e e f f 8 8 . .
+    . 8 8 8 8 8 8 6 6 6 6 9 6 8 8 .
+    8 8 8 8 8 8 8 8 6 6 6 9 6 6 8 8
+    8 8 8 8 8 8 8 8 6 6 6 6 9 6 8 8
+    """))
+    spaceship.set_position(75, 111)
+    spaceship.set_kind(SpriteKind.player)
+    controller.move_sprite(spaceship, 100, 0)
+    spaceship.set_flag(SpriteFlag.AUTO_DESTROY, True)

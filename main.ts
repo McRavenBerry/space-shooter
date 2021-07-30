@@ -1,8 +1,46 @@
+// damage()
+function damage() {
+    info.player1.changeLifeBy(-1)
+    pause(500)
+    if (info.player1.hasLife()) {
+        sprites.onDestroyed(SpriteKind.Player, function on_on_destroyed(sprite: Sprite) {
+            
+            pause(1000)
+            spaceship = sprites.create(img`
+    . . . . . . . c d . . . . . . .
+    . . . . . . . c d . . . . . . .
+    . . . . . . 8 c d 8 . . . . . .
+    . . . . . 8 8 c b 8 8 . . . . .
+    . . . . 8 8 6 f f 6 8 8 . . . .
+    . . . . 8 . . c 6 . . 8 . . . .
+    . . . 8 . . . f f . . . 8 . . .
+    . . . . . . . 8 6 . . . . . . .
+    . . . . . . 8 8 9 8 . . . . . .
+    . . . . . . 8 6 9 8 . . . . . .
+    . . . . . c c c 8 8 8 . . . . .
+    . . . . 8 8 6 6 6 9 8 8 . . . .
+    . . 8 f f f c c e e f f 8 8 . .
+    . 8 8 8 8 8 8 6 6 6 6 9 6 8 8 .
+    8 8 8 8 8 8 8 8 6 6 6 9 6 6 8 8
+    8 8 8 8 8 8 8 8 6 6 6 6 9 6 8 8
+    `)
+            spaceship.setPosition(75, 111)
+            spaceship.setKind(SpriteKind.Player)
+            controller.moveSprite(spaceship, 100, 0)
+            spaceship.setFlag(SpriteFlag.AutoDestroy, true)
+        })
+        pause(500)
+    } else {
+        game.over()
+    }
+    
+}
+
 // Background
 game.splash("Battlefield Galactica")
 effects.starField.startScreenEffect()
 // Set Score and Life 
-info.player1.setLife(1)
+info.player1.setLife(3)
 info.player1.setScore(0)
 // Spaceship
 let spaceship = sprites.create(img`
@@ -50,7 +88,7 @@ game.onUpdateInterval(1000, function spawner() {
     let xPos = randint(0, scene.screenWidth())
     asteroid.setPosition(xPos, 0)
     asteroid.setKind(SpriteKind.Enemy)
-    asteroid.setFlag(SpriteFlag.AutoDestroy, true)
+    sprites_to_wrap.push(asteroid)
 })
 // Set up the fire button
 controller.A.onEvent(ControllerButtonEvent.Pressed, function fire() {
@@ -78,12 +116,12 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function fire() {
 })
 // Check for collisions
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function collision(sprite: Sprite, otherSprite: Sprite) {
-    sprite.destroy(effects.fire, 100)
+    // sprite.destroy(effects.fire, 100)
     otherSprite.destroy(effects.fire, 100)
-    scene.cameraShake(20, 1000)
+    scene.cameraShake(10, 500)
     music.bigCrash.play()
+    damage()
     pause(1000)
-    info.player1.changeLifeBy(-1)
 })
 sprites.onOverlap(SpriteKind.Enemy, SpriteKind.Projectile, function hit(sprite: Sprite, otherSprite: Sprite) {
     sprite.destroy()
