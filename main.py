@@ -93,7 +93,9 @@ spaceship = sprites.create(img("""
 spaceship.set_position(75, 111)
 spaceship.set_kind(SpriteKind.player)
 controller.move_sprite(spaceship, 100, 0)
-spaceship.set_stay_in_screen(True)
+#spaceship.set_stay_in_screen(True)
+if(spaceship.x == scene.screen_width()):
+    spaceship.x = 0
 
 #Spawn asteroids
 game.on_update_interval(1000, spawner)
@@ -104,3 +106,20 @@ controller.A.on_event(ControllerButtonEvent.PRESSED, fire)
 #Check for collisions
 sprites.on_overlap(SpriteKind.player, SpriteKind.enemy, collision)
 sprites.on_overlap(SpriteKind.enemy, SpriteKind.projectile, hit)
+
+# Creates a list of sprites to screen wrap
+sprites_to_wrap: List[Sprite] = []
+sprites_to_wrap.append(spaceship)
+
+# Screen wrap code
+def on_on_update():
+    for value in sprites_to_wrap:
+        if value.left > scene.screen_width():
+            value.right = 0
+        elif value.right < 0:
+            value.left = scene.screen_width()
+        if value.bottom < 0:
+            value.top = scene.screen_height()
+        elif value.top > scene.screen_height():
+            value.bottom = 0
+game.on_update(on_on_update)

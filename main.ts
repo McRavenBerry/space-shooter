@@ -26,7 +26,11 @@ let spaceship = sprites.create(img`
 spaceship.setPosition(75, 111)
 spaceship.setKind(SpriteKind.Player)
 controller.moveSprite(spaceship, 100, 0)
-spaceship.setStayInScreen(true)
+// spaceship.set_stay_in_screen(True)
+if (spaceship.x == scene.screenWidth()) {
+    spaceship.x = 0
+}
+
 // Spawn asteroids
 game.onUpdateInterval(1000, function spawner() {
     let yVel = randint(20, 50)
@@ -92,4 +96,24 @@ sprites.onOverlap(SpriteKind.Enemy, SpriteKind.Projectile, function hit(sprite: 
     scene.cameraShake(5, 100)
     music.bigCrash.play()
     info.player1.changeScoreBy(1)
+})
+//  Creates a list of sprites to screen wrap
+let sprites_to_wrap : Sprite[] = []
+sprites_to_wrap.push(spaceship)
+//  Screen wrap code
+game.onUpdate(function on_on_update() {
+    for (let value of sprites_to_wrap) {
+        if (value.left > scene.screenWidth()) {
+            value.right = 0
+        } else if (value.right < 0) {
+            value.left = scene.screenWidth()
+        }
+        
+        if (value.bottom < 0) {
+            value.top = scene.screenHeight()
+        } else if (value.top > scene.screenHeight()) {
+            value.bottom = 0
+        }
+        
+    }
 })
